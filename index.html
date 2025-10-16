@@ -9,11 +9,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="32x32" href="images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="images/favicon-16x16.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="images/apple-touch-icon.png">
+  <link rel="icon" type="image/png" href="images/favicon.png">
 </head>
 <body class="dark">
   <header class="hero">
     <div class="wrap">
       <div>
+        <div class="logo-section">
+          <img src="images/flawless-finish-logo.png" alt="Flawless Finish Ceramic Coating Logo" class="logo">
+        </div>
         <h1>Flawless Finish Ceramic Coating</h1>
         <p class="lead">Desert‑luxe ceramic protection for Palm Springs & Coachella Valley — UV, heat, and sand defense with mirror‑grade gloss.</p>
         <div class="badges">
@@ -41,12 +50,75 @@
   </header>
 
   <main>
-    <section class="section light">
+    <section class="section light gallery-section">
       <div class="container">
+        <h2>Our Work Gallery</h2>
+        <p class="sub">Professional ceramic coating results from Palm Springs & Coachella Valley</p>
         <div class="gallery">
-          <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop" alt="After: ceramic-coated hood with deep gloss">
-          <img src="https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=800&auto=format&fit=crop" alt="During: polishing and prep">
-          <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=800&auto=format&fit=crop" alt="Before: swirls and haze">
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop" alt="BMW M5 freshly ceramic coated - dark grey finish with water beading">
+            <div class="gallery-caption">BMW M5 - 5-Year Ceramic Coating</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1483721310020-03333e577078?q=80&w=800&auto=format&fit=crop" alt="BMW M3 Nardo Grey with ceramic coating - pristine finish">
+            <div class="gallery-caption">BMW M3 - Nardo Grey with 3-Year Coating</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=800&auto=format&fit=crop" alt="Car interior with red leather and ceramic protection">
+            <div class="gallery-caption">Interior Ceramic Protection - Red Leather</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?q=80&w=800&auto=format&fit=crop" alt="BMW M5 rear view showing ceramic coating water beading">
+            <div class="gallery-caption">BMW M5 - Rear Detail with Water Beading</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?q=80&w=800&auto=format&fit=crop" alt="Car being washed with soap suds during prep process">
+            <div class="gallery-caption">Professional Prep Process</div>
+          </div>
+          <div class="gallery-item">
+            <img src="https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?q=80&w=800&auto=format&fit=crop" alt="BMW M3 interior with ceramic coating on dashboard">
+            <div class="gallery-caption">Interior Dashboard Protection</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section about-me">
+      <div class="container">
+        <div class="about-content">
+          <div class="about-text">
+            <h2>About Me</h2>
+            <p class="lead">Upgrading Great to Excellence</p>
+            <p>Hi, I'm Jason — the owner and operator of Flawless Finish Ceramic Coating here in sunny Palm Springs. My passion for cars started early. I began high-speed buffing at just 15 years old, and for the past <strong>28 years</strong> I've been perfecting my craft — restoring shine, depth, and protection to vehicles of all kinds.</p>
+            
+            <p>Originally from the Midwest, I bring those Indiana values of hard work, fairness, and loyalty into everything I do. At Flawless Finish, my focus is simple: deliver superior results and make every vehicle look better than new.</p>
+            
+            <p>For me, detailing isn't just about appearance — it's about pride, precision, and helping people fall in love with their cars all over again.</p>
+            
+            <p class="highlight">When you choose Flawless Finish Ceramic Coating, you're not just getting a service — you're getting a commitment to excellence.</p>
+            
+            <div class="credentials">
+              <div class="credential">
+                <span class="number">28</span>
+                <span class="label">Years Experience</span>
+              </div>
+              <div class="credential">
+                <span class="number">15</span>
+                <span class="label">Started Age</span>
+              </div>
+              <div class="credential">
+                <span class="number">∞</span>
+                <span class="label">Cars Restored</span>
+              </div>
+            </div>
+          </div>
+          <div class="about-image">
+            <img src="images/jason-headshot.jpg" alt="Jason - Owner of Flawless Finish Ceramic Coating" />
+            <div class="image-caption">
+              <strong>Jason</strong><br>
+              Owner & Master Detailer
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -160,6 +232,12 @@
       </div>
     </footer>
   </main>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox" class="lightbox">
+    <img id="lightbox-img" src="" alt="">
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+  </div>
 
   <script src="scripts.js"></script>
 </body>
