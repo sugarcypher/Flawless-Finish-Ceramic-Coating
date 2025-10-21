@@ -168,7 +168,9 @@ app.post('/api/create-payment-intent', async (req, res) => {
     }
 
     const { date, name, phone } = req.body || {};
-    if (!date) return res.status(400).json({ success: false, message: 'Missing date.' });
+    if (!date) return res.status(400).json({ success: false, message: 'Please select a date.' });
+    if (!name || name.trim().length === 0) return res.status(400).json({ success: false, message: 'Please enter your name.' });
+    if (!phone || phone.trim().length === 0) return res.status(400).json({ success: false, message: 'Please enter your phone number.' });
 
     // Create Stripe payment intent
     const paymentIntent = await stripe.paymentIntents.create({
@@ -267,7 +269,9 @@ app.post('/api/confirm-payment', async (req, res) => {
 // ── API: book cash reservation ────────────────────────────────────────────────
 app.post('/api/book-cash', async (req, res) => {
   let { date, name, phone } = req.body || {};
-  if (!date) return res.status(400).json({ success: false, message: 'Missing date.' });
+  if (!date) return res.status(400).json({ success: false, message: 'Please select a date.' });
+  if (!name || name.trim().length === 0) return res.status(400).json({ success: false, message: 'Please enter your name.' });
+  if (!phone || phone.trim().length === 0) return res.status(400).json({ success: false, message: 'Please enter your phone number.' });
 
   // sanitize input
   const sanitizedDate = String(date).slice(0, 10); // YYYY-MM-DD

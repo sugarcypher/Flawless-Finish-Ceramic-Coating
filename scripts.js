@@ -142,8 +142,17 @@ async function setupStripe() {
     }
     
     // Get customer info
-    const name = prompt('Your name (optional):') || '';
-    const phone = prompt('Your phone (optional):') || '';
+    const name = prompt('Your name (required):') || '';
+    const phone = prompt('Your phone number (required):') || '';
+    
+    if (!name.trim()) {
+      showToast('Please enter your name to continue.', 'error');
+      return;
+    }
+    if (!phone.trim()) {
+      showToast('Please enter your phone number to continue.', 'error');
+      return;
+    }
     
     // Create payment intent
     const response = await fetch('/api/create-payment-intent', {
@@ -180,8 +189,17 @@ async function handlePaymentSubmit(event) {
   event.preventDefault();
   
   const submitBtn = document.getElementById('submit-payment');
-  const name = prompt('Your name (optional):') || '';
-  const phone = prompt('Your phone (optional):') || '';
+  const name = prompt('Your name (required):') || '';
+  const phone = prompt('Your phone number (required):') || '';
+  
+  if (!name.trim()) {
+    showToast('Please enter your name to continue.', 'error');
+    return;
+  }
+  if (!phone.trim()) {
+    showToast('Please enter your phone number to continue.', 'error');
+    return;
+  }
   
   submitBtn.disabled = true;
   submitBtn.textContent = 'Processing...';
@@ -244,8 +262,17 @@ async function handlePaymentSubmit(event) {
 
 async function bookCash() {
   if (!selectedDate) return;
-  const name = prompt('Your name (optional):') || '';
-  const phone = prompt('Your phone (optional):') || '';
+  const name = prompt('Your name (required):') || '';
+  const phone = prompt('Your phone number (required):') || '';
+  
+  if (!name.trim()) {
+    showToast('Please enter your name to continue.', 'error');
+    return;
+  }
+  if (!phone.trim()) {
+    showToast('Please enter your phone number to continue.', 'error');
+    return;
+  }
 
   try {
     const res = await fetch('/api/book-cash', {
