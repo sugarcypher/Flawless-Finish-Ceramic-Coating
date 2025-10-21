@@ -137,6 +137,12 @@ async function sendEmailNotification(bookingData) {
 }
 
 // ── API: availability (one car per day) ───────────────────────────────────────
+// Health check endpoint for platform monitors (e.g., Render)
+app.get('/health', (_, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
+// ── API: availability (one car per day) ───────────────────────────────────────
 app.get('/api/availability', (req, res) => {
   const days = parseInt(req.query.days || '30', 10);
   const bookings = readBookings();
@@ -245,7 +251,7 @@ app.post('/api/confirm-payment', async (req, res) => {
     await sendEmailNotification({
       customerName: sanitizedName || 'N/A',
       customerPhone: sanitizedPhone || 'N/A',
-      customerEmail: sanitizedEmail || 'Not provided',
+      customerEmail: 'Not provided',
       selectedDate: humanDate,
       vehicleInfo: 'Not specified',
       depositAmount: 25000,
