@@ -1,4 +1,4 @@
-// server.js — v5 Stripe + Twilio integration
+// server.js — v5 Stripe + Email integration
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -7,8 +7,9 @@ const helmet = require('helmet');
 const compression = require('compression');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const twilio = require('twilio');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const nodemailer = require('nodemailer');
+// Initialize Stripe with fallback for missing keys
+const stripe = process.env.STRIPE_SECRET_KEY ? require('stripe')(process.env.STRIPE_SECRET_KEY) : null;
 
 const app = express();
 
@@ -47,23 +48,91 @@ function toYMD(d) {
   return `${y}-${m}-${day}`;
 }
 
-// ── Twilio (optional) ─────────────────────────────────────────────────────────
-const T_SID   = process.env.TWILIO_SID || '';
-const T_TOKEN = process.env.TWILIO_TOKEN || '';
-const T_FROM  = process.env.TWILIO_FROM || '';
-const T_TO    = process.env.TWILIO_TO   || '';
-const smsClient = (T_SID && T_TOKEN) ? twilio(T_SID, T_TOKEN) : null;
+// ── Email Configuration ─────────────────────────────────────────────────────────
+const emailConfig = {
+  host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+  port: parseInt(process.env.EMAIL_PORT || '587'),
+  secure: false, // true for 465, false for other ports
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+};
 
-async function sendSMS(message) {
-  if (!smsClient || !T_FROM || !T_TO) {
-    console.log('SMS skipped – Twilio vars missing.');
+const transporter = nodemailer.createTransport(emailConfig);
+const jasonEmail = process.env.JASON_EMAIL || 'j@flawlessfini.sh';
+
+async function sendEmailNotification(bookingData) {
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    console.log('Email skipped – Email credentials missing.');
     return;
   }
+  
   try {
-    const res = await smsClient.messages.create({ from: T_FROM, to: T_TO, body: message });
-    console.log('SMS sent:', res.sid);
+    const { customerName, customerPhone, customerEmail, selectedDate, vehicleInfo, depositAmount } = bookingData;
+    
+    const mailOptions = {
+      from: `"Flawless Finish Website" <${process.env.EMAIL_USER}>`,
+      to: jasonEmail,
+      subject: `New Booking - ${customerName} - ${selectedDate}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #FFD700; background: #0a0f1a; padding: 20px; margin: 0; text-align: center;">
+            🚗 New Ceramic Coating Booking
+          </h2>
+          <div style="background: #f8f9fa; padding: 30px;">
+            <h3 style="color: #0a0f1a; margin-top: 0;">Customer Information</h3>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold; width: 30%;">Name:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${customerName}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Phone:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${customerPhone}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Email:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${customerEmail}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Date:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${selectedDate}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd; font-weight: bold;">Vehicle:</td>
+                <td style="padding: 10px; border-bottom: 1px solid #ddd;">${vehicleInfo || 'Not specified'}</td>
+              </tr>
+              <tr>
+                <td style="padding: 10px; font-weight: bold;">Deposit:</td>
+                <td style="padding: 10px; color: #FFD700; font-weight: bold;">$${(depositAmount / 100).toFixed(2)}</td>
+              </tr>
+            </table>
+            
+            <div style="margin-top: 30px; padding: 20px; background: #e8f5e8; border-left: 4px solid #4CAF50;">
+              <h4 style="margin: 0 0 10px 0; color: #2e7d32;">✅ Deposit Received</h4>
+              <p style="margin: 0; color: #2e7d32;">The customer has successfully paid the $250 deposit to secure their booking.</p>
+            </div>
+            
+            <div style="margin-top: 20px; text-align: center;">
+              <a href="tel:${customerPhone}" style="background: #FFD700; color: #0a0f1a; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
+                📞 Call Customer
+              </a>
+            </div>
+          </div>
+          
+          <div style="background: #0a0f1a; color: #fff; padding: 20px; text-align: center; font-size: 12px;">
+            <p style="margin: 0;">Flawless Finish Ceramic Coating - Palm Springs & Coachella Valley</p>
+            <p style="margin: 5px 0 0 0;">This email was sent automatically from your website booking system.</p>
+          </div>
+        </div>
+      `
+    };
+    
+    const info = await transporter.sendMail(mailOptions);
+    console.log('Email sent:', info.messageId);
   } catch (err) {
-    console.error('SMS error:', err?.message || err);
+    console.error('Email error:', err?.message || err);
   }
 }
 
@@ -91,6 +160,13 @@ app.get('/api/availability', (req, res) => {
 // ── API: create payment intent ─────────────────────────────────────────────────
 app.post('/api/create-payment-intent', async (req, res) => {
   try {
+    if (!stripe) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Payment system temporarily unavailable. Please contact us directly.' 
+      });
+    }
+
     const { date, name, phone } = req.body || {};
     if (!date) return res.status(400).json({ success: false, message: 'Missing date.' });
 
@@ -120,6 +196,13 @@ app.post('/api/create-payment-intent', async (req, res) => {
 // ── API: confirm payment and book ──────────────────────────────────────────────
 app.post('/api/confirm-payment', async (req, res) => {
   try {
+    if (!stripe) {
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Payment system temporarily unavailable. Please contact us directly.' 
+      });
+    }
+
     const { paymentIntentId, date, name, phone } = req.body || {};
     
     if (!paymentIntentId || !date) {
@@ -155,15 +238,18 @@ app.post('/api/confirm-payment', async (req, res) => {
     });
     writeBookings(bookings);
 
-    // Notify Jason by SMS
+    // Notify Jason by email
     const humanDate = new Date(sanitizedDate + 'T12:00:00').toLocaleDateString([], { weekday:'short', month:'short', day:'numeric', timeZone: 'America/Los_Angeles' });
-    const msg = `New Flawless Finish booking (PAID):
-Date: ${humanDate}
-Payment: $250 deposit confirmed
-Client: ${sanitizedName || 'N/A'}
-Phone: ${sanitizedPhone || 'N/A'}
-Stripe ID: ${paymentIntentId}`;
-    await sendSMS(msg);
+    await sendEmailNotification({
+      customerName: sanitizedName || 'N/A',
+      customerPhone: sanitizedPhone || 'N/A',
+      customerEmail: sanitizedEmail || 'Not provided',
+      selectedDate: humanDate,
+      vehicleInfo: 'Not specified',
+      depositAmount: 25000,
+      paymentMethod: 'Stripe Card',
+      stripePaymentId: paymentIntentId
+    });
 
     return res.json({ 
       success: true, 
@@ -204,14 +290,18 @@ app.post('/api/book-cash', async (req, res) => {
   });
   writeBookings(bookings);
 
-  // Notify Jason by SMS
+  // Notify Jason by email
   const humanDate = new Date(sanitizedDate + 'T12:00:00').toLocaleDateString([], { weekday:'short', month:'short', day:'numeric', timeZone: 'America/Los_Angeles' });
-  const msg = `New Flawless Finish booking (CASH):
-Date: ${humanDate}
-Method: CASH RESERVATION
-Client: ${sanitizedName || 'N/A'}
-Phone: ${sanitizedPhone || 'N/A'}`;
-  await sendSMS(msg);
+  await sendEmailNotification({
+    customerName: sanitizedName || 'N/A',
+    customerPhone: sanitizedPhone || 'N/A',
+    customerEmail: 'Not provided',
+    selectedDate: humanDate,
+    vehicleInfo: 'Not specified',
+    depositAmount: 0,
+    paymentMethod: 'Cash Reservation',
+    stripePaymentId: 'N/A'
+  });
 
   return res.json({ success: true, message: 'Cash reservation saved.', date: sanitizedDate, method: 'cash' });
 });

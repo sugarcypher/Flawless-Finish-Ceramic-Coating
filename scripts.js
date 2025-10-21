@@ -319,5 +319,133 @@ function initGallery() {
   });
 }
 
+// Reviews functionality
+function initReviews() {
+  const reviewForm = document.getElementById('reviewForm');
+  const reviewsList = document.getElementById('recentReviews');
+  
+  // Load existing reviews from localStorage
+  loadReviews();
+  
+  // Handle review form submission
+  reviewForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(reviewForm);
+    const review = {
+      id: Date.now(),
+      name: formData.get('name'),
+      location: formData.get('location'),
+      review: formData.get('review'),
+      rating: formData.get('rating'),
+      date: new Date().toLocaleDateString()
+    };
+    
+    // Save to localStorage
+    const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    reviews.unshift(review);
+    localStorage.setItem('reviews', JSON.stringify(reviews));
+    
+    // Add to display
+    addReviewToDisplay(review);
+    
+    // Reset form
+    reviewForm.reset();
+    
+    // Show success message
+    showNotification('Thank you for your review!', 'success');
+  });
+  
+  function loadReviews() {
+    const reviews = JSON.parse(localStorage.getItem('reviews') || '[]');
+    reviews.forEach(review => addReviewToDisplay(review));
+  }
+  
+  function addReviewToDisplay(review) {
+    const reviewItem = document.createElement('div');
+    reviewItem.className = 'review-item';
+    reviewItem.innerHTML = `
+      <div class="review-header">
+        <div>
+          <div class="reviewer">${review.name}</div>
+          <div class="review-location">${review.location}</div>
+        </div>
+        <div class="review-rating">${'⭐'.repeat(review.rating)}</div>
+      </div>
+      <div class="review-text">${review.review}</div>
+    `;
+    reviewsList.appendChild(reviewItem);
+  }
+}
+
+// Email signup functionality
+function initEmailSignup() {
+  const emailForm = document.getElementById('emailSignup');
+  
+  emailForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const formData = new FormData(emailForm);
+    const email = formData.get('email');
+    
+    // Save to localStorage (in a real app, this would go to a server)
+    const subscribers = JSON.parse(localStorage.getItem('subscribers') || '[]');
+    if (!subscribers.includes(email)) {
+      subscribers.push(email);
+      localStorage.setItem('subscribers', JSON.stringify(subscribers));
+      showNotification('Successfully subscribed! Check your email for confirmation.', 'success');
+    } else {
+      showNotification('You\'re already subscribed!', 'info');
+    }
+    
+    emailForm.reset();
+  });
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+  const notification = document.createElement('div');
+  notification.className = `notification notification-${type}`;
+  notification.textContent = message;
+  
+  // Add styles
+  notification.style.cssText = `
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: ${type === 'success' ? '#4CAF50' : type === 'error' ? '#f44336' : '#2196F3'};
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 10000;
+    animation: slideIn 0.3s ease;
+  `;
+  
+  document.body.appendChild(notification);
+  
+  // Remove after 3 seconds
+  setTimeout(() => {
+    notification.style.animation = 'slideOut 0.3s ease';
+    setTimeout(() => notification.remove(), 300);
+  }, 3000);
+}
+
+// Add CSS for notifications
+const notificationStyles = document.createElement('style');
+notificationStyles.textContent = `
+  @keyframes slideIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  @keyframes slideOut {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+`;
+document.head.appendChild(notificationStyles);
+
 loadCalendar();
 initGallery();
+initReviews();
+initEmailSignup();

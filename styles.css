@@ -1,7 +1,8 @@
 :root{
   --indigo:#0A2342; --ink:#1A1A1A; --sand:#F7EFE2; --paper:#FFFFFF;
-  --gold:#E3B341; --sky:#49C5B6; --slate:#0f172a; --panel:#111827;
+  --gold:#FFD700; --sky:#00D4FF; --slate:#0a0f1a; --panel:#0d1421;
   --muted:#8CA1B3; --inkLight:#FAFAFA;
+  --gloss:#FF6B35; --chrome:#C0C0C0; --pearl:#F8F8FF;
 }
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial}
@@ -14,9 +15,11 @@ header.hero{
   background: radial-gradient(120% 140% at 70% 10%, #1b2a48 0%, #0e1930 60%, #0a1222 100%), url('https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=1600&auto=format&fit=crop') center/cover no-repeat;
   color:var(--inkLight); padding:96px 24px 72px; position:relative; overflow:hidden; border-bottom:1px solid rgba(255,255,255,.06);
 }
-.logo-section{margin-bottom:24px;text-align:center}
-.logo{max-height:120px;width:auto;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
-@media(max-width:640px){.logo{max-height:80px}}
+.logo-section{margin-bottom:32px;text-align:center}
+.logo{max-height:140px;width:auto;filter:drop-shadow(0 6px 20px rgba(0,0,0,.4)); transition:transform .3s ease, filter .3s ease}
+.logo:hover{transform:scale(1.05); filter:drop-shadow(0 8px 25px rgba(0,0,0,.5))}
+@media(max-width:640px){.logo{max-height:100px}}
+@media(max-width:480px){.logo{max-height:80px}}
 .hero .wrap{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1.2fr .8fr;gap:36px;align-items:center}
 @media(max-width:960px){.hero .wrap{grid-template-columns:1fr;padding-top:12px}}
 h1{font-family:'Playfair Display', Georgia, 'Times New Roman', serif; font-size:56px; line-height:1.05; margin:0 0 12px}
@@ -24,11 +27,14 @@ h1{font-family:'Playfair Display', Georgia, 'Times New Roman', serif; font-size:
 .badges{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}
 .badge{background:rgba(227,179,65,.12);border:1px solid rgba(227,179,65,.35);color:#ffe6a3;padding:6px 10px;border-radius:999px;font-size:12px}
 .cta-row{display:flex;gap:12px;flex-wrap:wrap}
-.button{border:none;border-radius:12px;padding:12px 18px;font-weight:700;cursor:pointer;transition:transform .06s ease, box-shadow .2s ease}
-.button.primary{background:linear-gradient(180deg, #f2ca58, var(--gold)); color:#2a1d00; box-shadow:0 10px 24px rgba(227,179,65,.25)}
-.button.primary:hover{transform:translateY(-1px)}
-.button.secondary{background:transparent;border:1px solid rgba(255,255,255,.3);color:#e6eef8}
-.button.secondary:hover{border-color:#fff}
+.button{border:none;border-radius:16px;padding:14px 24px;font-weight:700;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
+.button.primary{background:linear-gradient(135deg, #FFD700 0%, #FFA500 50%, #FF6B35 100%); color:#1a0d00; box-shadow:0 8px 32px rgba(255,215,0,.4), inset 0 1px 0 rgba(255,255,255,.3); text-shadow:0 1px 2px rgba(255,255,255,.3)}
+.button.primary:hover{transform:translateY(-2px); box-shadow:0 12px 40px rgba(255,215,0,.5), inset 0 1px 0 rgba(255,255,255,.4)}
+.button.primary:active{transform:translateY(0); box-shadow:0 4px 16px rgba(255,215,0,.3)}
+.button.secondary{background:linear-gradient(135deg, rgba(255,255,255,.1) 0%, rgba(255,255,255,.05) 100%); border:2px solid rgba(255,215,0,.6); color:#FFD700; backdrop-filter:blur(10px)}
+.button.secondary:hover{border-color:#FFD700; background:linear-gradient(135deg, rgba(255,215,0,.1) 0%, rgba(255,215,0,.05) 100%); transform:translateY(-1px)}
+.button.cta{background:linear-gradient(135deg, #00D4FF 0%, #0099CC 100%); color:#001122; box-shadow:0 8px 32px rgba(0,212,255,.4), inset 0 1px 0 rgba(255,255,255,.3)}
+.button.cta:hover{transform:translateY(-2px); box-shadow:0 12px 40px rgba(0,212,255,.5)}
 .card{background:var(--paper);color:var(--ink);border-radius:18px;padding:20px;border:1px solid #ece6da;box-shadow:0 6px 24px rgba(10,35,66,.08)}
 .card.dark{background:#132033;color:#eaf2fb;border-color:#1e2d45}
 .section{padding:56px 0}
@@ -42,12 +48,67 @@ h2{font-size:32px;margin:0 0 10px}
 .gallery-caption{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.8));color:#fff;padding:16px 20px 20px;font-size:14px;font-weight:600;text-align:center}
 @media(max-width:960px){.gallery{grid-template-columns:repeat(2,1fr);gap:16px}}
 @media(max-width:640px){.gallery{grid-template-columns:1fr;gap:12px}}
-.testimonials{background:linear-gradient(180deg,#F8F3EA, #FFFFFF)}
+
+/* Before & After Gallery Styles */
+.before-after-section{background:linear-gradient(180deg, var(--slate) 0%, #0b1529 100%); color:var(--inkLight)}
+.before-after-gallery{display:grid;grid-template-columns:repeat(auto-fit, minmax(500px, 1fr));gap:32px;margin-top:32px}
+.before-after-item{background:rgba(255,255,255,.05);border-radius:20px;padding:24px;border:1px solid rgba(255,255,255,.1)}
+.before-after-item{display:flex;flex-direction:column;gap:16px}
+.before-after-image{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.before-after-image img{width:100%;height:300px;object-fit:cover;display:block}
+.before-after-label{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.8);color:#fff;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+.before-after-caption{text-align:center;font-size:16px;font-weight:600;color:var(--gold);margin-top:8px}
+@media(max-width:640px){.before-after-gallery{grid-template-columns:1fr;gap:20px}.before-after-item{padding:16px}}
+
+/* CTA Button Styles */
+.gallery-cta, .before-after-cta, .about-cta{display:flex;gap:16px;justify-content:center;margin-top:32px;flex-wrap:wrap}
+.gallery-cta .button, .before-after-cta .button, .about-cta .button{min-width:200px}
+
+/* Reviews Section */
+.reviews-section{background:linear-gradient(180deg, var(--slate) 0%, #0b1529 100%); color:var(--inkLight)}
+.reviews-content{display:grid;grid-template-columns:1fr 1fr;gap:48px;margin-top:32px}
+.reviews-form{background:rgba(255,255,255,.05);border-radius:20px;padding:32px;border:1px solid rgba(255,255,255,.1)}
+.reviews-form h3{margin:0 0 24px;color:var(--gold);font-size:24px}
+.review-form .form-group{margin-bottom:20px}
+.review-form label{display:block;margin-bottom:8px;color:var(--inkLight);font-weight:600}
+.review-form input, .review-form textarea, .review-form select{width:100%;padding:12px 16px;border:2px solid rgba(255,255,255,.2);border-radius:12px;background:rgba(255,255,255,.05);color:var(--inkLight);font-size:16px;transition:border-color .3s ease}
+.review-form input:focus, .review-form textarea:focus, .review-form select:focus{outline:none;border-color:var(--gold)}
+.review-form textarea{resize:vertical;min-height:100px}
+.recent-reviews h3{margin:0 0 24px;color:var(--gold);font-size:24px}
+.reviews-list{max-height:400px;overflow-y:auto}
+.review-item{background:rgba(255,255,255,.05);border-radius:12px;padding:20px;margin-bottom:16px;border:1px solid rgba(255,255,255,.1)}
+.review-item .review-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.review-item .reviewer{font-weight:600;color:var(--gold)}
+.review-item .review-location{color:var(--muted);font-size:14px}
+.review-item .review-rating{color:#FFD700;font-size:16px}
+.review-item .review-text{color:var(--inkLight);line-height:1.6}
+
+/* Email Signup Section */
+.email-signup{background:linear-gradient(135deg, #F8F3EA 0%, #FFFFFF 100%); color:var(--ink)}
+.signup-content{display:grid;grid-template-columns:1.2fr .8fr;gap:48px;align-items:center}
+.signup-text h2{margin:0 0 16px;color:var(--ink)}
+.signup-text .lead{font-size:18px;color:var(--muted);margin:0 0 24px}
+.signup-benefits{list-style:none;padding:0;margin:0}
+.signup-benefits li{padding:8px 0;color:var(--ink);font-size:16px}
+.signup-form{background:var(--paper);border-radius:20px;padding:32px;box-shadow:0 8px 32px rgba(0,0,0,.1);border:1px solid #ece6da}
+.email-form .form-group{display:flex;gap:12px;margin-bottom:16px}
+.email-form input{flex:1;padding:14px 20px;border:2px solid #e0e0e0;border-radius:12px;font-size:16px;transition:border-color .3s ease}
+.email-form input:focus{outline:none;border-color:var(--gold)}
+.email-form .button{white-space:nowrap}
+.privacy-note{color:var(--muted);font-size:14px;margin:0;text-align:center}
+
+@media(max-width:960px){
+  .reviews-content, .signup-content{grid-template-columns:1fr;gap:32px}
+  .email-form .form-group{flex-direction:column}
+  .gallery-cta, .before-after-cta{flex-direction:column;align-items:center}
+}
+.testimonials{background:linear-gradient(180deg,#F8F3EA, #FFFFFF); color:var(--ink)}
 .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:960px){.testi-grid{grid-template-columns:1fr}}
-.testi{background:#fff;border:1px solid #eadfcd;border-radius:16px;padding:18px;box-shadow:0 10px 24px rgba(0,0,0,.05)}
-.testi h3{margin:0 0 6px;font-size:18px}
-.testi .by{color:#7b8a99;font-size:14px}
+.testi{background:#fff;border:1px solid #eadfcd;border-radius:16px;padding:18px;box-shadow:0 10px 24px rgba(0,0,0,.05); color:var(--ink)}
+.testi h3{margin:0 0 6px;font-size:18px;color:var(--ink);font-weight:600}
+.testi p{color:var(--ink);line-height:1.6;margin:0 0 12px}
+.testi .by{color:#5a6b7d;font-size:14px;font-weight:500}
 .pricing .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:960px){.pricing .tiers{grid-template-columns:1fr}}
 .tier{padding:18px;border-radius:16px;border:1px solid #eadfcd;background:#fff}
