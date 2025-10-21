@@ -60,7 +60,7 @@ const emailConfig = {
 };
 
 const transporter = nodemailer.createTransport(emailConfig);
-const jasonEmail = process.env.JASON_EMAIL || 'j@flawlessfini.sh';
+const jasonEmail = 'j@flawlessfini.sh';
 
 async function sendEmailNotification(bookingData) {
   if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
@@ -108,19 +108,19 @@ async function sendEmailNotification(bookingData) {
                 <td style="padding: 10px; color: #FFD700; font-weight: bold;">$${(depositAmount / 100).toFixed(2)}</td>
               </tr>
             </table>
-            
+
             <div style="margin-top: 30px; padding: 20px; background: #e8f5e8; border-left: 4px solid #4CAF50;">
               <h4 style="margin: 0 0 10px 0; color: #2e7d32;">✅ Deposit Received</h4>
               <p style="margin: 0; color: #2e7d32;">The customer has successfully paid the $250 deposit to secure their booking.</p>
             </div>
-            
+
             <div style="margin-top: 20px; text-align: center;">
               <a href="tel:${customerPhone}" style="background: #FFD700; color: #0a0f1a; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block;">
                 📞 Call Customer
               </a>
             </div>
           </div>
-          
+
           <div style="background: #0a0f1a; color: #fff; padding: 20px; text-align: center; font-size: 12px;">
             <p style="margin: 0;">Flawless Finish Ceramic Coating - Palm Springs & Coachella Valley</p>
             <p style="margin: 5px 0 0 0;">This email was sent automatically from your website booking system.</p>
@@ -128,7 +128,7 @@ async function sendEmailNotification(bookingData) {
         </div>
       `
     };
-    
+
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent:', info.messageId);
   } catch (err) {
