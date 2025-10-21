@@ -318,5 +318,19 @@ app.get('/api/stripe-key', (_, res) => {
 // ── Root ──────────────────────────────────────────────────────────────────────
 app.get('/', (_, res) => res.sendFile(path.join(__dirname, 'index.html')));
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Flawless Finish server running on ${PORT}`));
+// Simple health endpoint for platforms that probe readiness
+app.get('/health', (_, res) => res.status(200).json({ status: 'ok' }));
+
+// Normalize the port and bind to 0.0.0.0 for Render/containers
+function normalizePort(value) {
+  if (value == null) return 3000;
+  const numeric = Number(String(value).trim());
+  if (Number.isFinite(numeric) && numeric > 0) return numeric;
+  // Fallback: try extracting the first number sequence (handles cases like "=3000")
+  const match = String(value).match(/\d+/);
+  return match ? Number(match[0]) : 3000;
+}
+
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = normalizePort(process.env.PORT);
+app.listen(PORT, HOST, () => console.log(`Flawless Finish server running on ${HOST}:${PORT}`));
